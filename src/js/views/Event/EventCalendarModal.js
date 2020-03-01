@@ -12,12 +12,12 @@ class EventCalendarModal extends Component {
   static navigationOptions = {
     title: Strings.EVENT_CALENDAR_TITLE
   };
-  
+
   constructor(props) {
     super(props);
     this.state = {
       isTimePickerVisible: false,
-      selectedDatesTimes: this.props.navigation.getParam('selectedDatesTimes')
+      selectedDatesTimes: this.props.route.params.selectedDatesTimes
     };
 
     this.curDateIndex = null;
@@ -29,9 +29,7 @@ class EventCalendarModal extends Component {
     this.onPressSave = this.onPressSave.bind(this);
     this.onPressTime = this.onPressTime.bind(this);
 
-    this.onDatesTimesChange = this.props.navigation.getParam(
-      'onDatesTimesChange'
-    );
+    this.onDatesTimesChange = this.props.route.params.onDatesTimesChange;
   }
 
   buildMarkedDatesObject() {
@@ -114,7 +112,7 @@ class EventCalendarModal extends Component {
         </Text>
       </TouchableHighlight>
     ));
-    
+
     return (
       <ScrollView style={styles.container}>
         <Card elevation={3}>

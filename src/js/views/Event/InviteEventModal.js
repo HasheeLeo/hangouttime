@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Button, Checkbox, List, Title} from 'react-native-paper';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import DataList from '~/components/DataList';
 import {Strings, Theme} from '~/constants';
@@ -11,11 +11,11 @@ class InviteEventModal extends Component {
   static navigationOptions = {
     title: Strings.INVITE_EVENT_TITLE
   };
-  
+
   constructor(props) {
     super(props);
     let selectedObj = {};
-    const selectedArray = this.props.navigation.getParam('guests');
+    const selectedArray = this.props.route.params.guests;
     selectedArray.forEach(guest => selectedObj[guest.uid] = true);
 
     this.state = {
@@ -26,7 +26,7 @@ class InviteEventModal extends Component {
 
     this.onPressInvite = this.onPressInvite.bind(this);
     this.select = this.select.bind(this);
-    this.updateGuests = this.props.navigation.getParam('onGuestsChange');
+    this.updateGuests = this.props.route.params.onGuestsChange;
   }
 
   componentDidMount() {
@@ -34,14 +34,14 @@ class InviteEventModal extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     const friendsRef = firebase.database().ref(`friends/${user.uid}`);
     friendsRef.once('value').then(snapshot => {
       if (!snapshot.exists()) {
         this.setState({isLoading: false});
         return;
       }
-      
+
       const friendsObj = snapshot.val();
       const friendsUids = Object.keys(friendsObj);
       let friends = Object.values(friendsObj);

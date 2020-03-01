@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import {StyleSheet} from 'react-native';
 import {List, Title} from 'react-native-paper';
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import DataList from '~/components/DataList';
 import FAB from '~/components/FAB';
@@ -27,7 +27,7 @@ class FriendsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     const friendsRef = firebase.database().ref(`friends/${user.uid}`);
     friendsRef.on('child_added', this.onAddFriend);
     friendsRef.on('child_changed', this.onChangeFriend);
@@ -47,7 +47,7 @@ class FriendsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     firebase.database().ref(`friends/${user.uid}`).off();
   }
 
@@ -57,7 +57,7 @@ class FriendsView extends Component {
       this.setState({isLoading: false});
       return;
     }
-    
+
     let friend = snapshot.val();
     friend.uid = snapshot.key;
     this.setState(prevState => ({
@@ -73,7 +73,7 @@ class FriendsView extends Component {
       if (index === -1)
         // TODO could this possibly remove all state?
         return;
-      
+
       let changedFriend = snapshot.val();
       changedFriend.uid = snapshot.key;
       newFriends[index] = changedFriend;

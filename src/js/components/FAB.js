@@ -4,7 +4,7 @@ import {FAB as PaperFAB} from 'react-native-paper';
 
 const FAB = ({onPress}) => (
   <PaperFAB
-    icon="add"
+    icon="plus"
     style={styles.fab}
     onPress={onPress}
   />

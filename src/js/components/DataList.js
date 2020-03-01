@@ -1,7 +1,6 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import {Card, Title} from 'react-native-paper';
-import {FlatList} from 'react-navigation';
 
 import {Theme} from '~/constants';
 

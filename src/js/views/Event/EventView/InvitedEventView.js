@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 import PropTypes from 'prop-types';
 
 import SaveButton from '~/components/SaveButton';
@@ -30,13 +30,13 @@ class InvitedEventView extends Component {
     // THIS SHOULD NEVER HAPPEN
     if (!user)
       return;
-    
+
     const userRefString = `users_datestimes/${user.uid}/${this.eventObject.id}`;
     const userDatesTimesRef = firebase.database().ref(userRefString);
     userDatesTimesRef.once('value').then(snapshot => {
       if (!snapshot.exists())
         return;
-      
+
       const selectedDatesTimes = snapshot.val();
       if (selectedDatesTimes)
         this.setState({selectedDatesTimes: selectedDatesTimes})
@@ -52,7 +52,7 @@ class InvitedEventView extends Component {
     // THIS SHOULD NEVER HAPPEN
     if (!user)
       return;
-    
+
     this.setState({isSaving: true});
     const database = firebase.database();
     const refString = `users_datestimes/${user.uid}/${this.eventObject.id}`;
@@ -68,10 +68,10 @@ class InvitedEventView extends Component {
           for (const dateTime in eventDatesTimes) {
             if (!eventDatesTimes.hasOwnProperty(dateTime))
               continue;
-            
+
             if (oldSelectedDatesTimes && oldSelectedDatesTimes[dateTime])
               eventDatesTimes[dateTime]--;
-            
+
             if (this.state.selectedDatesTimes[dateTime])
               eventDatesTimes[dateTime]++;
           }
@@ -112,7 +112,7 @@ class InvitedEventView extends Component {
         newDatesTimesVotes[key]--;
       else
         newDatesTimesVotes[key]++;
-      
+
       let newSelectedDatesTimes = {...prevState.selectedDatesTimes};
       newSelectedDatesTimes[key] = !newSelectedDatesTimes[key];
 

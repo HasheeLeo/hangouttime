@@ -1,14 +1,19 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {ScrollView} from 'react-navigation';
+import {ScrollView, StyleSheet} from 'react-native';
+import {useScrollToTop} from '@react-navigation/native';
 
 import {Theme} from '~/constants';
 
-const AppScrollView = ({children}) => (
-  <ScrollView style={styles.container}>
-    {children}
-  </ScrollView>
-);
+const AppScrollView = ({children}) => {
+  const ref = React.useRef(null);
+  useScrollToTop(ref);
+
+  return (
+    <ScrollView ref={ref} style={styles.container}>
+      {children}
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -134,7 +134,7 @@ class EventForm extends Component {
               {datesTimes}
             </View>
             <Button
-              icon="add"
+              icon="plus"
               onPress={() => (
                 this.props.navigation.navigate(Routes.EVENT_CALENDAR, {
                   'selectedDatesTimes': this.state.eventDatesTimes,
@@ -150,7 +150,7 @@ class EventForm extends Component {
               {guests}
             </View>
             <Button
-              icon="mail-outline"
+              icon="email-outline"
               onPress={() => (
                 this.props.navigation.navigate(Routes.INVITE_EVENT, {
                   'guests': this.state.eventGuests,

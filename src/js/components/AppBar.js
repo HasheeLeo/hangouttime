@@ -5,7 +5,7 @@ import {Theme} from '~/constants';
 
 export const AppBar = ({navigation}) => {
   return {
-    headerLeft: (
+    headerLeft: () => (
       <MaterialIcons
         color={Theme.WHITE}
         name="menu"

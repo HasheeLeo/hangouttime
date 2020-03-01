@@ -3,7 +3,7 @@ import {Alert} from 'react-native';
 import {Card, IconButton} from 'react-native-paper';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
@@ -17,34 +17,10 @@ import HostingEventView from '~/views/Event/EventView/HostingEventView';
 import {Events, Routes, Strings, Theme} from '~/constants';
 
 class EventView extends Component {
-  static navigationOptions = ({navigation}) => {
-    const eventType = navigation.getParam(Events.EVENT_TYPE);
-    const isHostView = eventType === Events.HOSTING_EVENTS;
-    const onPressDelete = navigation.getParam('onPressDelete');
-    const onPressEdit = navigation.getParam('onPressEdit');
-    return {
-      headerRight: isHostView && (
-        <Fragment>
-          <IconButton
-            color={Theme.WHITE}
-            icon="edit"
-            onPress={onPressEdit}
-          />
-          <IconButton
-            color={Theme.WHITE}
-            icon="delete"
-            onPress={onPressDelete}
-          />
-        </Fragment>
-      ),
-      title: null
-    };
-  };
-
   constructor(props) {
     super(props);
-    this.eventObject = this.props.navigation.getParam(Events.EVENT_OBJECT);
-    this.eventType = this.props.navigation.getParam(Events.EVENT_TYPE);
+    this.eventObject = this.props.route.params[Events.EVENT_OBJECT];
+    this.eventType = this.props.route.params[Events.EVENT_TYPE];
 
     this.state = {
       isDatesTimesLoading: true,
@@ -73,10 +49,10 @@ class EventView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     if (user.uid !== this.eventObject.host)
       return;
-    
+
     this.setState({isUpdating: true});
     let updatesObj = {};
     updatesObj[`events/${this.eventObject.id}`] = null;
@@ -102,7 +78,7 @@ class EventView extends Component {
     eventsDatesTimesRef.once('value').then(snapshot => {
       if (!snapshot.exists())
         return;
-      
+
       const datesTimes = snapshot.val();
       const datesTimesMoments = Object.keys(datesTimes).map(dateTime => (
         moment(dateTime)
@@ -122,12 +98,12 @@ class EventView extends Component {
         this.setState({isGuestsLoading: false});
         return;
       }
-      
+
       const guests = snapshot.val();
       for (const uid in guests) {
         if (!guests.hasOwnProperty(uid))
           continue;
-        
+
         this.eventObject.guests.push({
           uid: uid,
           name: guests[uid].name
@@ -142,10 +118,10 @@ class EventView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     if (user.uid !== this.eventObject.host)
       return;
-    
+
     Alert.alert(Strings.Event.DELETE_TITLE,
       Strings.Event.DELETE_MSG + this.eventObject.name + '?',
       [
@@ -168,7 +144,7 @@ class EventView extends Component {
   render() {
     if (this.state.isDatesTimesLoading || this.state.isGuestsLoading)
       return null;
-    
+
     let eventView;
     if (this.eventType === Events.GOING_EVENTS)
       eventView = (
@@ -192,7 +168,7 @@ class EventView extends Component {
           navigation={this.props.navigation}
         />
       );
-    
+
     return (
       <AppScrollView>
         <Spinner color={Theme.PRIMARY} visible={this.state.isUpdating} />

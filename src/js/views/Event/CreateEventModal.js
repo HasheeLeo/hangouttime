@@ -1,5 +1,5 @@
 import React from 'react';
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 import EventForm from '~/components/Event/EventForm';
 import {Strings} from '~/constants';
 
@@ -14,7 +14,7 @@ function onEventCreate(eventObject) {
   );
   let datesAndTimesObj = {};
   datesTimes.forEach(dateAndTime => datesAndTimesObj[dateAndTime] = 0);
-  
+
   const database = firebase.database();
   const newEventRef = database.ref('events').push();
   let updatesObj = {};
@@ -27,7 +27,7 @@ function onEventCreate(eventObject) {
   const description = eventObject.description;
   if (description)
     updatesObj[`events/${newEventRef.key}`].description = description;
-  
+
   updatesObj[`users_hosting/${user.uid}/${newEventRef.key}`] = true;
   updatesObj[`events_datestimes/${newEventRef.key}`] = datesAndTimesObj;
   eventObject.eventGuests.forEach(guest => {

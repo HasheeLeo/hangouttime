@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {Button, HelperText, Text, TextInput} from 'react-native-paper';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import {Routes, Strings, Theme} from '~/constants';
 
@@ -28,7 +28,7 @@ class SignInView extends Component {
         this.props.navigation.navigate(Routes.APP);
     });
   }
-  
+
   componentWillUnmount() {
     if (this.removeAuthStateObserver)
       this.removeAuthStateObserver();
@@ -103,7 +103,7 @@ class SignInView extends Component {
   signIn() {
     if (this.state.isLoading)
       return;
-    
+
     if (!this.state.email || !this.state.password) {
       this.setState({
         helperText: Strings.MISSING_INPUT,
@@ -111,13 +111,13 @@ class SignInView extends Component {
       });
       return;
     }
-    
+
     this.setState({
       helperText: null,
       isHelperTextVisible: false,
       isLoading: true
     });
-    
+
     firebase.auth().signInWithEmailAndPassword(
       this.state.email, this.state.password
     )
@@ -130,7 +130,7 @@ class SignInView extends Component {
         helperText = Strings.Auth.INVALID_CREDENTIALS;
       else
         helperText = Strings.NETWORK_ERROR;
-      
+
       this.setState({
         helperText: helperText,
         isHelperTextVisible: true,

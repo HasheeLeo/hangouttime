@@ -1,6 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
-import {FlatList} from 'react-navigation';
+import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import {Card, Text, Title, Paragraph} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -39,7 +38,7 @@ function EventsView(props) {
         helpText = 'Events that are not finalized will appear here.';
       else
         helpText = 'Events you create will appear here.';
-      
+
       events = (
         <View style={styles.helpTextContainer}>
           <Title style={{textAlign: 'center'}}>{helpText}</Title>

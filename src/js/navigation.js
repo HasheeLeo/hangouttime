@@ -1,16 +1,13 @@
 import React from 'react';
-import {Drawer} from 'react-native-paper';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {
-  createAppContainer,
-  createDrawerNavigator,
-  createMaterialTopTabNavigator,
-  createStackNavigator,
-  createSwitchNavigator
-} from 'react-navigation';
+import {IconButton} from 'react-native-paper';
+
+import {createSwitchNavigator} from '@react-navigation/compat';
+import {NavigationContainer} from '@react-navigation/native';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 
 import {AppBar, AppBarStyle} from '~/components/AppBar';
-import DrawerComponent from '~/components/DrawerComponent';
 
 import SignInView from '~/views/SignInView';
 import SignUpView from '~/views/SignUpView';
@@ -28,40 +25,37 @@ import AddFriendsModal from '~/views/Friend/AddFriendsModal';
 
 import {Events, Routes, Strings, Theme} from '~/constants';
 
-const GoingNavigator = createStackNavigator(
-  {
-    GoingMain: {
-      screen: EventsView,
-      params: {[Events.EVENTS_TYPE]: Events.GOING_EVENTS}
-    }
-  },
-  {
-    headerMode: 'none'
-  }
+const GoingStack = createStackNavigator();
+const GoingNavigator = () => (
+  <GoingStack.Navigator headerMode='none'>
+    <GoingStack.Screen
+      name='GoingMain'
+      component={EventsView}
+      initialParams={{[Events.EVENTS_TYPE]: Events.GOING_EVENTS}}
+    />
+  </GoingStack.Navigator>
 );
 
-const InvitedNavigator = createStackNavigator(
-  {
-    InvitedMain: {
-      screen: EventsView,
-      params: {[Events.EVENTS_TYPE]: Events.INVITED_EVENTS}
-    }
-  },
-  {
-    headerMode: 'none'
-  }
+const InvitedStack = createStackNavigator();
+const InvitedNavigator = () => (
+  <InvitedStack.Navigator headerMode='none'>
+    <InvitedStack.Screen
+      name='InvitedMain'
+      component={EventsView}
+      initialParams={{[Events.EVENTS_TYPE]: Events.INVITED_EVENTS}}
+    />
+  </InvitedStack.Navigator>
 );
 
-const HostingNavigator = createStackNavigator(
-  {
-    HostingMain: {
-      screen: EventsView,
-      params: {[Events.EVENTS_TYPE]: Events.HOSTING_EVENTS}
-    }
-  },
-  {
-    headerMode: 'none'
-  }
+const HostingStack = createStackNavigator();
+const HostingNavigator = () => (
+  <HostingStack.Navigator headerMode='none'>
+    <HostingStack.Screen
+      name='HostingMain'
+      component={EventsView}
+      initialParams={{[Events.EVENTS_TYPE]: Events.HOSTING_EVENTS}}
+    />
+  </HostingStack.Navigator>
 );
 
 const TabBarStyle = {
@@ -78,138 +72,93 @@ const TabBarStyle = {
   }
 };
 
-const HomeTabs = createMaterialTopTabNavigator(
-  {
-    [Routes.GOING]: GoingNavigator,
-    [Routes.INVITED]: InvitedNavigator,
-    [Routes.HOSTING]: HostingNavigator
-  },
-  {
-    tabBarOptions: TabBarStyle
-  }
+const HomeTopTabs = createMaterialTopTabNavigator();
+const HomeTabs = () => (
+  <HomeTopTabs.Navigator tabBarOptions={TabBarStyle}>
+    <HomeTopTabs.Screen name={Routes.GOING} component={GoingNavigator} />
+    <HomeTopTabs.Screen name={Routes.INVITED} component={InvitedNavigator} />
+    <HomeTopTabs.Screen name={Routes.HOSTING} component={HostingNavigator} />
+  </HomeTopTabs.Navigator>
 );
 
-const HomeNavigator = createStackNavigator(
-  {
-    HomeMain: {
-      screen: HomeTabs,
-      navigationOptions: AppBar
-    },
-    [Routes.CREATE_EVENT]: CreateEventModal,
-    [Routes.EDIT_EVENT]: EditEventModal,
-    [Routes.EVENT_CALENDAR]: EventCalendarModal,
-    [Routes.INVITE_EVENT]: InviteEventModal,
-
-    [Routes.EVENT]: EventView
-  },
-  {
-    cardStyle: {
-      backgroundColor: Theme.GRAY
-    },
-    defaultNavigationOptions: {
-      ...AppBarStyle,
-      title: Strings.HOME_TITLE
-    },
-    mode: 'modal'
-  }
+const HomeStack = createStackNavigator();
+const HomeNavigator = () => (
+  <HomeStack.Navigator
+    cardStyle={{backgroundColor: Theme.GRAY}}
+    mode='modal'
+    screenOptions={{...AppBarStyle, title: Strings.HOME_TITLE}}
+  >
+    <HomeStack.Screen name='HomeMain' component={HomeTabs} options={AppBar} />
+    <HomeStack.Screen name={Routes.CREATE_EVENT} component={CreateEventModal} />
+    <HomeStack.Screen name={Routes.EDIT_EVENT} component={EditEventModal} />
+    <HomeStack.Screen name={Routes.EVENT_CALENDAR} component={EventCalendarModal} />
+    <HomeStack.Screen name={Routes.INVITE_EVENT} component={InviteEventModal} />
+    <HomeStack.Screen
+      name={Routes.EVENT}
+      component={EventView}
+      options={({route}) => {
+        const eventType = route.params[Events.EVENT_TYPE];
+        const isHostView = eventType === Events.HOSTING_EVENTS;
+        const onPressDelete = route.params.onPressDelete;
+        const onPressEdit = route.params.onPressEdit;
+        return {
+          headerRight: () => (isHostView && (
+            <>
+              <IconButton
+                color={Theme.WHITE}
+                icon='square-edit-outline'
+                onPress={onPressEdit}
+              />
+              <IconButton
+                color={Theme.WHITE}
+                icon='delete'
+                onPress={onPressDelete}
+              />
+            </>
+          )),
+          headerRightContainerStyle: {
+            flexDirection: 'row'
+          },
+          title: null
+        };
+      }}
+    />
+  </HomeStack.Navigator>
 );
 
-const FriendsTabs = createMaterialTopTabNavigator(
-  {
-    [Routes.FRIENDS]: FriendsView,
-    [Routes.REQUESTS]: RequestsView
-  },
-  {
-    tabBarOptions: TabBarStyle
-  }
+const FriendsTopTabs = createMaterialTopTabNavigator();
+const FriendsTabs = () => (
+  <FriendsTopTabs.Navigator tabBarOptions={TabBarStyle}>
+    <FriendsTopTabs.Screen name={Routes.FRIENDS} component={FriendsView} />
+    <FriendsTopTabs.Screen name={Routes.REQUESTS} component={RequestsView} />
+  </FriendsTopTabs.Navigator>
 );
 
-const FriendsNavigator = createStackNavigator(
-  {
-    FriendsMain: {
-      screen: FriendsTabs,
-      navigationOptions: AppBar
-    },
-    [Routes.ADD_FRIENDS]: AddFriendsModal
-  },
-  {
-    cardStyle: {
-      backgroundColor: Theme.GRAY
-    },
-    defaultNavigationOptions: {
-      ...AppBarStyle,
-      title: Strings.FRIENDS_TITLE
-    },
-    mode: 'modal'
-  }
+const FriendsStack = createStackNavigator();
+const FriendsNavigator = () => (
+  <FriendsStack.Navigator
+    cardStyle={{backgroundColor: Theme.GRAY}}
+    screenOptions={{...AppBarStyle, title: Strings.FRIENDS_TITLE}}
+  >
+    <FriendsStack.Screen name='FriendsMain' component={FriendsTabs} />
+    <FriendsStack.Screen name={Routes.ADD_FRIENDS} component={AddFriendsModal} />
+  </FriendsStack.Navigator>
 );
 
-const AppNavigator = createDrawerNavigator(
-  {
-    [Routes.HOME]: {
-      screen: HomeNavigator,
-      navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <MaterialIcons
-            color={tintColor}
-            name="home"
-            size={25}
-          />
-        ),
-        drawerLabel: ({focused}) => (
-          <Drawer.Item
-            active={focused}
-            label="Home"
-            style={{backgroundColor: 'transparent'}}
-          />
-        )
-      }
-    },
-    [Routes.FRIENDS]: {
-      screen: FriendsNavigator,
-      navigationOptions: {
-        drawerIcon: ({tintColor}) => (
-          <MaterialIcons
-            color={tintColor}
-            name="group"
-            size={25}
-          />
-        ),
-        drawerLabel: ({focused}) => (
-          <Drawer.Item
-            active={focused}
-            label="Friends"
-            style={{backgroundColor: 'transparent'}}
-          />
-        )
-      }
-    },
-  },
-  {
-    contentComponent: DrawerComponent,
-    contentOptions: {
-      activeBackgroundColor: Theme.GRAY,
-      activeTintColor: Theme.PRIMARY
-    },
-    defaultNavigationOptions: ({navigation}) => {
-      // Disable drawer opening gesture on other screens
-      let drawerLockMode = 'unlocked';
-      if (navigation.state.index > 0)
-        drawerLockMode = 'locked-closed';
-      
-      return {drawerLockMode};
-    }
-  }
+const Drawer = createDrawerNavigator();
+const AppNavigator = () => (
+  <Drawer.Navigator>
+    <Drawer.Screen name={Routes.HOME} component={HomeNavigator} />
+    <Drawer.Screen name={Routes.FRIENDS} component={FriendsNavigator} />
+  </Drawer.Navigator>
 );
 
-const AuthNavigator = createStackNavigator(
-  {
-    [Routes.SIGN_IN]: SignInView,
-    [Routes.SIGN_UP]: SignUpView
-  },
-  {
-    headerMode: 'none'
-  }
+const AuthStack = createStackNavigator();
+const AuthNavigator = () => (
+  <AuthStack.Navigator headerMode='none'>
+    <AuthStack.Screen name={Routes.SIGN_IN} component={SignInView} />
+    <AuthStack.Screen name={Routes.SIGN_UP} component={SignUpView} />
+  </AuthStack.Navigator>
 );
 
 const RootNavigator = createSwitchNavigator(
@@ -219,5 +168,10 @@ const RootNavigator = createSwitchNavigator(
   }
 );
 
-const AppContainer = createAppContainer(RootNavigator);
-export default AppContainer;
+const Navigator = () => (
+  <NavigationContainer>
+    <RootNavigator />
+  </NavigationContainer>
+);
+
+export default Navigator;

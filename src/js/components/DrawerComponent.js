@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {Drawer, Title} from 'react-native-paper';
-import {DrawerItems, SafeAreaView} from 'react-navigation';
 import MaterialCommunityIcons
   from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import {Routes, Theme} from '~/constants';
 
@@ -26,7 +25,7 @@ class DrawerComponent extends Component {
       usersRef.once('value').then(snapshot => {
         if (!snapshot.exists())
           return;
-        
+
         const name = snapshot.val();
         this.setState({name: name});
       });
@@ -42,7 +41,7 @@ class DrawerComponent extends Component {
   render() {
     if (!this.state.name)
       return null;
-    
+
     return (
       <ScrollView>
         <SafeAreaView
@@ -52,15 +51,15 @@ class DrawerComponent extends Component {
           <View style={styles.titleContainer}>
             <Title style={{color: Theme.WHITE}}>{this.state.name}</Title>
           </View>
-          <DrawerItems {...this.props} />
-          <Drawer.Item
+          {/*<DrawerItems {...this.props} />*/}
+          {/*<Drawer.Item
             icon={({color, size}) => (
               <MaterialCommunityIcons color={color} name="logout" size={size} />
-            )}
+            )}*
             label="Sign Out"
             onPress={this.logout}
             style={{marginVertical: 0}}
-          />
+          />*/}
         </SafeAreaView>
       </ScrollView>
     );

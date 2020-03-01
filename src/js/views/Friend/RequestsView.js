@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import {StyleSheet} from 'react-native';
 import {Button, List, Title} from 'react-native-paper';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import DataList from '~/components/DataList';
 import FAB from '~/components/FAB';
@@ -31,7 +31,7 @@ class RequestsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     const database = firebase.database();
     const requestsRef = database.ref(`requests_received/${user.uid}`);
     requestsRef.on('child_added', this.onAddRequest);
@@ -52,7 +52,7 @@ class RequestsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     firebase.database().ref(`requests_received/${user.uid}`).off();
   }
 
@@ -62,7 +62,7 @@ class RequestsView extends Component {
       this.setState({isLoading: false});
       return;
     }
-    
+
     let request = snapshot.val();
     request.uid = snapshot.key;
     this.setState(prevState => ({
@@ -80,7 +80,7 @@ class RequestsView extends Component {
       if (index === -1)
         // TODO could this possibly remove all state?
         return;
-      
+
       let changedRequest = snapshot.val();
       changedRequest.uid = snapshot.key;
       newRequests[index] = changedRequest;
@@ -102,13 +102,13 @@ class RequestsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     this.setState(prevState => {
       let isAccepting = {...prevState.isAccepting};
       isAccepting[senderUid] = true;
       return {isAccepting: isAccepting};
     });
-    
+
     const receiverUid = user.uid;
     const database = firebase.database();
     database.ref(`people/${receiverUid}/name`).once('value').then(snapshot => {
@@ -120,7 +120,7 @@ class RequestsView extends Component {
         });
         return;
       }
-      
+
       const receiverName = snapshot.val();
 
       let updatesObj = {};

@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 import PropTypes from 'prop-types';
 
 import SaveButton from '~/components/SaveButton';
@@ -30,7 +30,7 @@ class HostingEventView extends Component {
     database.ref(finalDateTimePath).once('value', snapshot => {
       if (!snapshot.exists())
         return;
-      
+
       const selectedDateTimeKey = snapshot.val();
       this.selectedDateTimeKey = selectedDateTimeKey;
       let newSelectedDateTime = {};
@@ -43,7 +43,7 @@ class HostingEventView extends Component {
     // No selected date
     if (!this.selectedDateTimeKey)
       return;
-    
+
     this.setState({isSaving: true});
     const database = firebase.database();
     const guestsRef = database.ref(`events_guests/${this.eventObject.id}`);
@@ -53,12 +53,12 @@ class HostingEventView extends Component {
         this.setState({isSaving: false});
         return;
       }
-      
+
       const userIds = snapshot.val();
       for (const userId in userIds) {
         if (!userIds.hasOwnProperty(userId))
           continue;
-        
+
         updatesObj[`users_datestimes/${userId}/${this.eventObject.id}`] = null;
         updatesObj[`users_going/${userId}/${this.eventObject.id}`] = true;
         updatesObj[`users_invited/${userId}/${this.eventObject.id}`] = null;

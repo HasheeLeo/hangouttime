@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Alert} from 'react-native';
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import EventsView from '~/components/Event/EventsView';
 import {Events, Strings} from '~/constants';
@@ -8,7 +8,7 @@ import {Events, Strings} from '~/constants';
 class GoingEventsView extends Component {
   constructor(props) {
     super(props);
-    this.eventsType = this.props.navigation.getParam(Events.EVENTS_TYPE);
+    this.eventsType = this.props.route.params[Events.EVENTS_TYPE];
 
     this.state = {
       events: [],
@@ -27,7 +27,7 @@ class GoingEventsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     const database = firebase.database();
     let eventsRef;
     if (this.eventsType === Events.GOING_EVENTS)
@@ -36,7 +36,7 @@ class GoingEventsView extends Component {
       eventsRef = database.ref(`users_invited/${user.uid}`);
     else
       eventsRef = database.ref(`users_hosting/${user.uid}`);
-    
+
     eventsRef.on('child_added', this.onAddEvent);
     eventsRef.on('child_removed', this.onRemoveEvent);
 
@@ -47,7 +47,7 @@ class GoingEventsView extends Component {
       firstTimeRef.once('value').then(snapshot => {
         if (!snapshot.exists())
           return;
-        
+
         Alert.alert(Strings.Alpha.ALERT_TITLE, Strings.Alpha.ALERT_MSG,
           [{text: 'Understood', onPress: () => firstTimeRef.set(null)}],
           {cancelable: false});
@@ -68,7 +68,7 @@ class GoingEventsView extends Component {
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     const database = firebase.database();
     let eventsRef;
     if (eventsRef === Events.GOING_EVENTS)
@@ -77,7 +77,7 @@ class GoingEventsView extends Component {
       eventsRef = database.ref(`users_invited/${user.uid}`);
     else
       eventsRef = database.ref(`users_hosting/${user.uid}`);
-    
+
     eventsRef.off();
     database.ref('events').off();
   }
@@ -88,7 +88,7 @@ class GoingEventsView extends Component {
       this.setState({isLoading: false});
       return;
     }
-    
+
     const eventId = snapshot.key;
     const eventRef = firebase.database().ref(`events/${eventId}`);
     eventRef.once('value').then(snapshot => {
@@ -112,14 +112,14 @@ class GoingEventsView extends Component {
     // for that case here.
     if (!snapshot.exists())
       return;
-    
+
     this.setState(prevState => {
       let newEvents = prevState.events.slice();
       const index = newEvents.findIndex(event => event.id === snapshot.key);
       if (index === -1)
         // TODO could this possibly remove all state?
         return;
-      
+
       let changedEvent = snapshot.val();
       changedEvent.id = snapshot.key;
       newEvents[index] = changedEvent;

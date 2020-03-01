@@ -1,5 +1,5 @@
 import React from 'react';
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 import EventForm from '~/components/Event/EventForm';
 import {Events, Strings} from '~/constants';
 
@@ -14,7 +14,7 @@ function onEventEdit(eventObject) {
   );
   let datesAndTimesObj = {};
   datesTimes.forEach(dateAndTime => datesAndTimesObj[dateAndTime] = 0);
-  
+
   const database = firebase.database();
   let updatesObj = {};
   updatesObj[`events/${eventObject.id}`] = {
@@ -49,11 +49,11 @@ function onEventEdit(eventObject) {
   return database.ref().update(updatesObj);
 }
 
-const CreateEventModal = ({navigation}) => {
+const CreateEventModal = ({navigation, route}) => {
   return (
     <EventForm
       actionButtonText={Strings.Actions.SAVE}
-      eventObject={navigation.getParam(Events.EVENT_OBJECT)}
+      eventObject={route.params[Events.EVENT_OBJECT]}
       navigation={navigation}
       onAction={onEventEdit}
     />

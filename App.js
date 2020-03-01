@@ -1,14 +1,17 @@
 import React, {Component} from 'react';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
-import AppContainer from '~/navigation';
+import '@react-native-firebase/auth';
+import '@react-native-firebase/database'
+
+import Navigator from '~/navigation';
 import {Theme} from '~/constants';
 
 class App extends Component {
   render() {
     return (
       <PaperProvider theme={theme}>
-        <AppContainer />
+        <Navigator />
       </PaperProvider>
     );
   }

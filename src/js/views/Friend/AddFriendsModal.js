@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import {Button, List, Searchbar, Title} from 'react-native-paper';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 
 import {Strings} from '~/constants';
 import DataList from '~/components/DataList';
@@ -30,7 +30,7 @@ class AddFriendsModal extends Component {
     if (!sender)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     this.setState(prevState => {
       let isSendingRequest = {...prevState.isSendingRequest};
       isSendingRequest[receiverUid] = true;
@@ -48,7 +48,7 @@ class AddFriendsModal extends Component {
         });
         return;
       }
-      
+
       const senderName = snapshot.val();
 
       let updatesObj = {};
@@ -116,18 +116,18 @@ class AddFriendsModal extends Component {
       this.setState({isLoading: false, results: []});
       return;
     }
-    
+
     const user = firebase.auth().currentUser;
     if (!user)
       // THIS SHOULD NEVER HAPPEN
       return;
-    
+
     this.setState({results: []});
     const database = firebase.database();
     const query = database.ref('people').orderByChild('name')
       .startAt(this.state.searchValue.toUpperCase())
       .endAt(this.state.searchValue.toLowerCase() + '\uf8ff');
-    
+
     query.once('child_added', snapshot => {
       this.setState({isLoading: true});
       let person = snapshot.val();
@@ -142,13 +142,13 @@ class AddFriendsModal extends Component {
         if (snapshot.exists()) {
           this.setState({isLoading: false});
         }
-        
+
         else {
           const isFriendPath = `friends/${user.uid}/${person.uid}`;
           database.ref(isFriendPath).once('value').then(snapshot => {
             if (snapshot.exists())
               this.setState({isLoading: false});
-            
+
             else
               this.setState(prevState => ({
                 results: [...prevState.results, person]

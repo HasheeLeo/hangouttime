@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Text, Title} from 'react-native-paper';
 
-import firebase from 'react-native-firebase';
+import firebase from '@react-native-firebase/app';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
@@ -23,7 +23,7 @@ class GoingEventView extends Component {
     database.ref(dateTimePath).once('value', snapshot => {
       if (!snapshot.exists())
         return;
-      
+
       this.setState({dateTime: snapshot.val()});
     });
   }
